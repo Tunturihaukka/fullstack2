@@ -20,11 +20,14 @@ const App = () => {
         name: nameholder,
         number: newNumber
       }
+      /* Adds person also to filtered persons (persons that will be shown)
+      if the name does not contain the currently active filter */
       setPersons(persons.concat(personObject))
       if (!personObject.name.includes(newFilter) || newFilter === ''){
         setFiltered(filteredpersons.concat(personObject))
       }
     }
+  
     setNewName('')
     setNumber('')
   }
@@ -64,35 +67,25 @@ const App = () => {
     }
   } 
 
+  const getName = () => {
+    console.log('newName', newName)
+    return(
+      newName
+    )
+    
+  }
+  const getNumber = () => newNumber
 
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-          filter shown with <input
-            value={newFilter}
-            onChange={filterHandler}
-          />
-        </div>
-        <h2>add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input
-            value={newName}
-            onChange={nameHandler}
-          />
-        </div>
-        <div>
-          number: <input
-            value={newNumber}
-            onChange={numberHandler}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter newFilter={newFilter} filterHandler={filterHandler} />
+      <h2>add a new</h2>
+      <PersonForm name={newName} number={newNumber}
+        nameHandler={nameHandler} numberHandler={numberHandler}
+        addName={addName}
+      />
       <h2>Numbers</h2>
       <ul>
         {filteredpersons.map(person => 
@@ -105,6 +98,53 @@ const App = () => {
   )
 
 }
+
+const Filter = ({newFilter, filterHandler}) => (
+  <div>
+    filter shown with <input
+      value={newFilter}
+      onChange={filterHandler}
+    />
+  </div>
+)
+
+const PersonForm = ({newName, newNumber, nameHandler, numberHandler, addName}) => {
+
+
+  return (
+  <div>
+    <form id='submitForm' onSubmit={addName}>
+    <div>
+      name: <input
+        value={newName}
+        onChange={nameHandler}
+      />
+    </div>
+    <div>
+      number: <input
+        value={newNumber}
+        onChange={numberHandler}
+      />
+    </div>
+    <div>
+      <button type="submit">add</button>
+
+    </div>
+    </form>
+  </div>
+  )
+}
+
+const Numbers = ({newFilter, filterHandler}) => (
+  <div>
+    filter shown with <input
+      value={newFilter}
+      onChange={filterHandler}
+    />
+  </div>
+)
+
+
 
 /* Checks if the string in 'filter' is contained in the name of
 the object 'currentPerson'. If not, that person is added to accumlated
