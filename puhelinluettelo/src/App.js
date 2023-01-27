@@ -64,48 +64,62 @@ const App = () => {
     }
   } 
 
-
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-          filter shown with <input
-            value={newFilter}
-            onChange={filterHandler}
-          />
-        </div>
-        <h2>add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input
-            value={newName}
-            onChange={nameHandler}
-          />
-        </div>
-        <div>
-          number: <input
-            value={newNumber}
-            onChange={numberHandler}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter newFilter={newFilter} filterHandler={filterHandler}/>
+      <h2>add a new</h2>
+      <PersonForm newName={newName} newNumber={newNumber} nameHandler={nameHandler} numberHandler={numberHandler} addName={addName}/>
       <h2>Numbers</h2>
-      <ul>
-        {filteredpersons.map(person => 
-          <li key={person.name}>
-            {person.name} {person.number}
-          </li>
-        )}
-      </ul>
+      <Persons filteredpersons={filteredpersons}/>
     </div>
   )
 
 }
 
+const PersonForm = ({newName, newNumber, nameHandler, numberHandler, addName}) => {
+
+  return (
+    <form onSubmit={addName}>
+      <div>
+        name: <input
+          value={newName}
+          onChange={nameHandler}
+        />
+      </div>
+      <div>
+        number: <input
+          value={newNumber}
+          onChange={numberHandler}
+        />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const Persons = ({filteredpersons}) => (
+  <ul>
+    {filteredpersons.map(person => 
+      <li key={person.name}>
+        {person.name} {person.number}
+      </li>
+    )}
+  </ul>
+)
+
+const Filter = ({newFilter, filterHandler}) => (
+  <div>
+    filter shown with <input
+      value={newFilter}
+      onChange={filterHandler}
+    />
+  </div>
+)
+
+ 
 /* Checks if the string in 'filter' is contained in the name of
 the object 'currentPerson'. If not, that person is added to accumlated
 array copy in 'accumulator', which starts as an empty array
