@@ -82,10 +82,24 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} filterHandler={filterHandler} />
       <h2>add a new</h2>
-      <PersonForm name={newName} number={newNumber}
-        nameHandler={nameHandler} numberHandler={numberHandler}
-        addName={addName}
-      />
+      <form id='submitForm' onSubmit={addName}>
+        <div>
+          name: <input
+            value={newName}
+            onChange={nameHandler}
+          />
+        </div>
+        <div>
+          number: <input
+            value={newNumber}
+            onChange={numberHandler}
+          />
+        </div>
+        <div>
+          <button type="submit">add</button>
+
+        </div>
+      </form>
       <h2>Numbers</h2>
       <ul>
         {filteredpersons.map(person => 
