@@ -29,6 +29,10 @@ const App = () => {
         name: nameholder,
         number: newNumber
       }
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+    })
       setPersons(persons.concat(personObject))
       if (!personObject.name.includes(newFilter) || newFilter === ''){
         setFiltered(filteredpersons.concat(personObject))
