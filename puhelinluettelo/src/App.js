@@ -10,6 +10,7 @@ const App = () => {
   const [newNumber, setNumber] = useState('')
   const [newFilter, setFilter] = useState('')
   const [alertmessage, setAlert] = useState(null)
+  const [showError, setError] = useState(false)
 
   useEffect(() => {
     noteService
@@ -64,12 +65,19 @@ const App = () => {
                   setFiltered(response.data)
                 }
               })
+              setAlert(`Number of ${nameholder} was updated`)
+          }).catch(error => {
+            setAlert(`Error: ${foundobj.retname} was already removed from the server`)
+            setError(true)
           })
+          setTimeout(() => {
+            setAlert(null)
+          }, 5000)
+          setError(false)
           /* Name and number fields for adding new person can now be emptied
           by emptying related spaces in App before refresh */
           setNewName('')
           setNumber('')
-          setAlert(`Number of ${nameholder} was updated`)
           setTimeout(() => {
             setAlert(null)
           }, 5000)
@@ -143,11 +151,15 @@ const App = () => {
         .then(response => {
           setPersons(persons.filter(p => p.name !== person.name).concat())
           setFiltered(filteredpersons.filter(p => p.name !== person.name).concat())
+          setAlert(`Deleted ${person.name} successfully`)
+        }).catch(error => {
+          setAlert(`Error: ${person.name} was already removed from the server`)
+          setError(true)
         })
-        setAlert(`Deleted ${person.name} successfully`)
         setTimeout(() => {
           setAlert(null)
         }, 5000)
+        setError(false)
     }
   }
 
@@ -176,7 +188,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={alertmessage} />
+      <Notification message={alertmessage} error={showError} />
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} filterHandler={filterHandler}/>
       <h2>add a new</h2>
@@ -203,13 +215,13 @@ const personSearch = (searchname, persons) => {
   return null
 }
 
-const Notification = ({ message, success }) => {
+const Notification = ({ message, error }) => {
   if (message === null) {
     return null
   }
-  if (success) {
+  if (error) {
     return (
-      <div className="success">
+      <div className="erroralert">
         {message}
       </div>
     )
