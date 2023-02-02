@@ -23,6 +23,33 @@ const App = () => {
     })
   }, [])
 
+  /* Call to refresh the list on website to match the list on server \filtered results */
+  const retrieveFromServer = () => {
+    noteService
+      /* updates person arrays in the space of App by retrieving updated objects from server */
+      .getAll()
+      .then(response => {
+        setPersons(response.data)
+        /* If the filter field has content, checks if the just updated object's name 
+        contains the string to be filtered */
+        if (newFilter !== '') { 
+          /* Filtering the object list retrieved from the server */
+          const filtered = response.data.reduce(
+            (accumulator, currentPerson) => (
+              checkFunction(accumulator, currentPerson, newFilter)
+            ),
+            []
+            )
+          setFiltered(filtered)
+        } else {
+          /* Without filter, all objects are added to persons and
+          to filteredpersons spaces. (The site shows filteredpersons.) */
+          setFiltered(response.data)
+        }
+      })
+      setNewName('')
+      setNumber('')
+  }
 
   /* Handles request of adding new name with a number to the phonebook */
   const addName = (adding) => {
@@ -43,44 +70,22 @@ const App = () => {
           /* updates the object in the server. Replaces old object with new having new number */
           .update(foundobj.id, personObject)
           .then(response => {
-            noteService
-              /* updates person arrays in the space of App by retrieving updated objects from server */
-              .getAll()
-              .then(response => {
-                setPersons(response.data)
-                /* If the filter field has content, checks if the just updated object's name 
-                contains the string to be filtered */
-                if (newFilter !== '') { 
-                  /* Filtering the object list retrieved from the server */
-                  const filtered = response.data.reduce(
-                    (accumulator, currentPerson) => (
-                      checkFunction(accumulator, currentPerson, newFilter)
-                    ),
-                    []
-                    )
-                  setFiltered(filtered)
-                } else {
-                  /* Without filter, all objects are added to persons and
-                  to filteredpersons spaces. (The site shows filteredpersons.) */
-                  setFiltered(response.data)
-                }
-              })
-              setAlert(`Number of ${nameholder} was updated`)
+            retrieveFromServer() /* Refreshing list in website to match server */
+            setAlert(`Number of ${nameholder} was updated`)
           }).catch(error => {
-            setAlert(`Error: ${foundobj.retname} was already removed from the server`)
+            /* If the entry to be changed was not in the server anymore, then
+            a complete new entry is created. */
+            noteService.create(personObject)
+            retrieveFromServer() /* Refreshing list in website to match server */
+            setAlert(`Error: ${foundobj.retname} was already removed from the server. Added a new entry.`)
             setError(true)
           })
-          setTimeout(() => {
-            setAlert(null)
-          }, 5000)
-          setError(false)
           /* Name and number fields for adding new person can now be emptied
           by emptying related spaces in App before refresh */
-          setNewName('')
-          setNumber('')
-          setTimeout(() => {
-            setAlert(null)
-          }, 5000)
+        setTimeout(() => {
+          setAlert(null)
+          setError(false)
+        }, 5000)
       }
     } else {
       /* If the name of the person to be added was not found in phonebook already */
@@ -91,16 +96,7 @@ const App = () => {
       noteService
         /* Adds a new person object to server. */
         .create(personObject)
-        .then(response => {
-          /* Here new person is added to the site by directly editing the relevant 
-          spaces in App.  */
-          setPersons(persons.concat(personObject))
-          if (!personObject.name.includes(newFilter) || newFilter === ''){
-            setFiltered(filteredpersons.concat(personObject))
-          }
-          setNewName('')
-          setNumber('')
-        })
+        retrieveFromServer()
         setAlert(`Added ${nameholder}`)
         setTimeout(() => {
           setAlert(null)
@@ -153,6 +149,26 @@ const App = () => {
           setFiltered(filteredpersons.filter(p => p.name !== person.name).concat())
           setAlert(`Deleted ${person.name} successfully`)
         }).catch(error => {
+          
+          noteService
+          .getAll()
+          .then(response => {
+            setPersons(response.data)
+              if (newFilter !== '') { 
+                const filtered = response.data.reduce(
+                (accumulator, currentPerson) => (
+                  checkFunction(accumulator, currentPerson, newFilter)
+                ),
+                []
+                )
+              setFiltered(filtered)
+              } else {
+          setFiltered(response.data)
+        }
+      })
+      setNewName('')
+      setNumber('')
+
           setAlert(`Error: ${person.name} was already removed from the server`)
           setError(true)
         })
@@ -203,7 +219,6 @@ const App = () => {
 const personSearch = (searchname, persons) => {
   for (let i = 0; i < persons.length; i++) {
     if (persons[i].name === searchname){
-      console.log(i, persons[i].name)
       const returnobj = {
         id : persons[i].id,
         retname : persons[i].name,
@@ -288,7 +303,7 @@ the object 'currentPerson'. If not, that person is added to accumlated
 array copy in 'accumulator', which starts as an empty array
 and is in the end returned. */
   const checkFunction = (accumulator, currentPerson, filter) => {
-    if (currentPerson.name.toLowerCase().includes(filter)) {
+    if (currentPerson.name.toLowerCase().includes(filter.toLowerCase())) {
       return accumulator
     } else {
       return (

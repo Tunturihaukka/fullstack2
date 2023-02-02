@@ -1,9 +1,39 @@
 {
   "persons": [
     {
-      "name": "Ada Lovelace",
-      "number": "908789",
-      "id": 2
+      "name": "Julius Caesar",
+      "number": "23429382-253235",
+      "id": 4
+    },
+    {
+      "name": "Trajanus",
+      "number": "21212-121212",
+      "id": 5
+    },
+    {
+      "name": "Kleopatra",
+      "number": "23323-4224",
+      "id": 6
+    },
+    {
+      "name": "Tullia",
+      "number": "2323-242323",
+      "id": 10
+    },
+    {
+      "name": "Nero",
+      "number": "99999-88888",
+      "id": 11
+    },
+    {
+      "name": "Vergilius",
+      "number": "24242-25242",
+      "id": 14
+    },
+    {
+      "name": "Horatius",
+      "number": "2323-2323",
+      "id": 15
     }
   ]
 }
