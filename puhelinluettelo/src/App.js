@@ -18,19 +18,59 @@ const App = () => {
     .then(response => {
       setPersons(response.data)
       setFiltered(response.data)
+    }).catch(error => {
+      console.log('error')
     })
   }, [])
 
+
+  /* Handles request of adding new name with a number to the phonebook */
   const addName = (adding) => {
     adding.preventDefault()
     const nameholder = newName
-    if (persons.some(person =>
-      person.name === nameholder)) {
-        setAlert(`${nameholder} is already added to phonebook`)
-        setSuccess(false)
-        setTimeout(() => {
-          setAlert(null)
-        }, 5000)
+
+    /* Calls to check if the name to be added already exists (in space of app)  */
+    const foundobj = personSearch(nameholder,persons)
+    
+    if (foundobj !== null) {
+      if (window.confirm(`${foundobj.retname} is already in phonebook, change number?`)) {
+        /* If the name already existed, and user requests the number to be changed */
+        const personObject = {
+          name: foundobj.retname,
+          number: newNumber
+        }
+        noteService
+          /* updates the object in the server. Replaces old object with new having new number */
+          .update(foundobj.id, personObject)
+          .then(response => {
+            noteService
+              /* updates person arrays in the space of App by retrieving updated objects from server */
+              .getAll()
+              .then(response => {
+                setPersons(response.data)
+                /* If the filter field has content, checks if the just updated object's name 
+                contains the string to be filtered */
+                if (newFilter !== '') { 
+                  /* Filtering the object list retrieved from the server */
+                  const filtered = response.data.reduce(
+                    (accumulator, currentPerson) => (
+                      checkFunction(accumulator, currentPerson, newFilter)
+                    ),
+                    []
+                    )
+                  setFiltered(filtered)
+                } else {
+                  /* Without filter, all objects are added to persons and
+                  to filteredpersons spaces. (The site shows filteredpersons.) */
+                  setFiltered(response.data)
+                }
+              })
+          })
+          /* Name and number fields for adding new person can now be emptied
+          by emptying related spaces in App before refresh */
+          setNewName('')
+          setNumber('')
+      }
     } else {
       const personObject = {
         name: nameholder,
@@ -53,6 +93,7 @@ const App = () => {
         }, 5000)
     }
   }
+
 
   const nameHandler = (input) => {
     setNewName(input.target.value)
@@ -135,6 +176,21 @@ const App = () => {
     </div>
   )
 
+}
+
+const personSearch = (searchname, persons) => {
+  for (let i = 0; i < persons.length; i++) {
+    if (persons[i].name === searchname){
+      console.log(i, persons[i].name)
+      const returnobj = {
+        id : persons[i].id,
+        retname : persons[i].name,
+        number : persons[i].number
+      }
+      return returnobj
+    }
+  }
+  return null
 }
 
 const Notification = ({ message, success }) => {

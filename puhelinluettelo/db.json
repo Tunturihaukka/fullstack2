@@ -1,9 +1,14 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
+      "name": "Ada Lovelace",
+      "number": "908789",
+      "id": 2
+    },
+    {
+      "name": "Dan Abramov",
+      "number": "12-43-234345",
+      "id": 3
     },
     {
       "name": "Mary Poppendieck",
@@ -11,19 +16,9 @@
       "id": 4
     },
     {
-      "name": "julius",
-      "number": "97978",
+      "name": "Ada lovelace",
+      "number": "11111111",
       "id": 5
-    },
-    {
-      "name": "augustus",
-      "number": "23242",
-      "id": 7
-    },
-    {
-      "name": "Julius Caesar",
-      "number": "2323",
-      "id": 8
     }
   ]
 }
