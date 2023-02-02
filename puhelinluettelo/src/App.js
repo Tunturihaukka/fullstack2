@@ -161,21 +161,21 @@ const App = () => {
                 ),
                 []
                 )
-              setFiltered(filtered)
+                setFiltered(filtered)
               } else {
-          setFiltered(response.data)
-        }
-      })
-      setNewName('')
-      setNumber('')
+                setFiltered(response.data)
+              }
+          })
+        setNewName('')
+        setNumber('')
 
-          setAlert(`Error: ${person.name} was already removed from the server`)
-          setError(true)
-        })
-        setTimeout(() => {
-          setAlert(null)
-        }, 5000)
+        setAlert(`Error: ${person.name} was already removed from the server`)
+        setError(true)
+      })
+      setTimeout(() => {
+        setAlert(null)
         setError(false)
+      }, 5000)
     }
   }
 
