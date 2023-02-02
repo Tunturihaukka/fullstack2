@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useEffect} from 'react'
 import noteService from './services/persons'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -8,6 +9,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNumber] = useState('')
   const [newFilter, setFilter] = useState('')
+  const [alertmessage, setAlert] = useState(null)
+  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     noteService
@@ -23,7 +26,11 @@ const App = () => {
     const nameholder = newName
     if (persons.some(person =>
       person.name === nameholder)) {
-        window.alert(`${nameholder} is already added to phonebook`)
+        setAlert(`${nameholder} is already added to phonebook`)
+        setSuccess(false)
+        setTimeout(() => {
+          setAlert(null)
+        }, 5000)
     } else {
       const personObject = {
         name: nameholder,
@@ -39,6 +46,11 @@ const App = () => {
           setNewName('')
           setNumber('')
         })
+        setAlert(`Added ${nameholder}`)
+        setSuccess(true)
+        setTimeout(() => {
+          setAlert(null)
+        }, 5000)
     }
   }
 
@@ -113,6 +125,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={alertmessage} success={success} />
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} filterHandler={filterHandler}/>
       <h2>add a new</h2>
@@ -122,6 +135,24 @@ const App = () => {
     </div>
   )
 
+}
+
+const Notification = ({ message, success }) => {
+  if (message === null) {
+    return null
+  }
+  if (success) {
+    return (
+      <div className="success">
+        {message}
+      </div>
+    )
+  }
+  return (
+    <div className="alert">
+      {message}
+    </div>
+  )
 }
 
 const PersonForm = ({newName, newNumber, nameHandler, numberHandler, addName}) => {
